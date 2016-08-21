@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "windows-store-automation",
   "name": "Windows Store Automation",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "davesmits",
   "targets": [
     {
@@ -19,6 +19,9 @@
   "files": [
     {
       "path": "DeployToStore"
+    },
+    {
+      "path": "VersionUpdate"
     }
   ],
   "contributions": [
@@ -30,6 +33,16 @@
       ],
       "properties": {
         "name": "DeployToStore"
+      }
+    },
+    {
+      "id": "custom-build-task-2",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "VersionUpdate"
       }
     }
   ]
