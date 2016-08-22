@@ -1,7 +1,7 @@
 {
     "id": "521D1D15-F5FB-4B83-A93B-B2FE44A9A286",
-    "name": "Update Version",
-    "friendlyName": "Update Version",
+    "name": "Update Appx Version",
+    "friendlyName": "Update Appx Version",
     "description": "Update Version in Manifest file",
     "helpMarkDown": "",
     "category": "Deploy",
@@ -11,9 +11,9 @@
     ],
     "author": "Dave Smits",
     "version": {
-        "Major": 0,
-        "Minor": 5,
-        "Patch": 25
+        "Major": 1,
+        "Minor": 0,
+        "Patch": 1
     },
     "minimumAgentVersion": "1.91.0",
     "groups": [
@@ -23,7 +23,7 @@
             "isExpanded": true
         }
     ],
-    "instanceNameFormat": "Update Version Number",
+    "instanceNameFormat": "Update Appx Version Number",
     "inputs": [
         {
             "name": "manifestfile",
