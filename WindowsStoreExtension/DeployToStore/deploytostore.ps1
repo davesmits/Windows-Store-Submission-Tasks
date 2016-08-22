@@ -70,13 +70,13 @@ function MakeFlightSubmission($teantId, $clientId, $clientSecret, $flightId)
 #$clientSecret = "oTarctYJVHsiJCE9hk+M+gCPVrUABbb/eHLxStXko0k="
 
 $DevCenterEndpoint = Get-ServiceEndpoint -Context $distributedTaskContext -Name $serviceendpoint
-$tenantId = $DevCenterEndpoint.tenantid;
+$tenantId = $DevCenterEndpoint.Authorization.Parameters.tenantid;
 Write-Host "TenantId: $tenantId"
 
-$clientid = $DevCenterEndpoint.clientid;
+$clientid = $DevCenterEndpoint.Authorization.Parameters.clientid;
 Write-Host "ClientId: $clientid"
 
-$clientsecret = $DevCenterEndpoint.apikey;
+$clientsecret = $DevCenterEndpoint.Authorization.Parameters.apikey;
 Write-Host "Client Secret: $clientsecret"
 
 
