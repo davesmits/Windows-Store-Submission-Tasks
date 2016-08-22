@@ -69,15 +69,22 @@ function MakeFlightSubmission($teantId, $clientId, $clientSecret, $flightId)
 #$clientId = "1d913b52-16ad-411a-a5e6-f09a60d5e1ec"
 #$clientSecret = "oTarctYJVHsiJCE9hk+M+gCPVrUABbb/eHLxStXko0k="
 
-$DevCenterEndpoint = Get-ServiceEndpoint -Context $distributedTaskContext -Name $globalOptions.ServiceEndpoint
+$DevCenterEndpoint = Get-ServiceEndpoint -Context $distributedTaskContext -Name $serviceendpoint
 $tenantId = $DevCenterEndpoint.tenantid;
+Write-Host "TenantId: $tenantId"
+
 $clientid = $DevCenterEndpoint.clientid;
+Write-Host "ClientId: $clientid"
+
 $clientsecret = $DevCenterEndpoint.apikey;
+Write-Host "Client Secret: $clientsecret"
+
+
 
 if ($flightid){
     Write-Host "Flighted Submission"
     MakeFlightSubmission $tenantid $clientid $clientsecret $flightid
 }else{
-    Write-Host "Submission"
+    Write-Host "NonFlighted Submission"
     MakeSubmission $tenantid $clientid $clientsecret
 }
