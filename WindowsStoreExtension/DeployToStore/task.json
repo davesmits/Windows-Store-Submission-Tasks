@@ -26,7 +26,7 @@
     "instanceNameFormat": "Publish to the Windows Store",
     "inputs": [
         {
-            "name": "service endpoint",
+            "name": "serviceendpoint",
             "type": "connectedService:devcenter-auth-key",
             "label": "Service Endpoint",
             "defaultValue": "",
