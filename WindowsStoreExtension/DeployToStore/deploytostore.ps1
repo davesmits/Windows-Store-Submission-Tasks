@@ -1,9 +1,7 @@
 ﻿[cmdletbinding()]
 param
 (
-   [Parameter(Mandatory=$true)][string] $tenantid,
-   [Parameter(Mandatory=$true)][string] $clientid,
-   [Parameter(Mandatory=$true)][string] $clientsecret,
+   [Parameter(Mandatory=$true)][string] $ServiceEndpoint,
    [Parameter(Mandatory=$true)][string] $appid,
    [Parameter(Mandatory=$true)][string] $flightid,
    [Parameter(Mandatory=$true)][string] $fileurl
@@ -70,6 +68,8 @@ function MakeFlightSubmission($teantId, $clientId, $clientSecret, $flightId)
 #$tenantId = "61e615f3-161b-4bda-a67a-407317766d1f"
 #$clientId = "1d913b52-16ad-411a-a5e6-f09a60d5e1ec"
 #$clientSecret = "oTarctYJVHsiJCE9hk+M+gCPVrUABbb/eHLxStXko0k="
+
+$MarketEndpoint = Get-ServiceEndpoint -Context $distributedTaskContext -Name $globalOptions.ServiceEndpoint
 
 if ($flightid){
     Write-Host "Flighted Submission"
