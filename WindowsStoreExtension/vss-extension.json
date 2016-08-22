@@ -85,17 +85,6 @@
                   "isRequired": true,
                   "dataType": "string"
                 }
-              },
-              {
-                "id": "clientsecret",
-                "name": "Client Secret",
-                "description": "Client Secret",
-                "inputMode": "textbox",
-                "isConfidential": false,
-                "validation": {
-                  "isRequired": true,
-                  "dataType": "string"
-                }
               }
             ]
           }
