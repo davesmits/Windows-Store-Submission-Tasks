@@ -9,6 +9,10 @@
       "id": "Microsoft.VisualStudio.Services"
     }
   ],
+  "scope": [
+    "vso.build",
+    "vso.serviceendpoint"
+  ],
   "description": "Build task to publish to the windows store",
   "categories": [
     "Build and release"
