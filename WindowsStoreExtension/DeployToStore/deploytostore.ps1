@@ -79,7 +79,13 @@ Write-Host "ClientId: $clientid"
 $clientsecret = $DevCenterEndpoint.Authorization.Parameters.ApiToken;
 Write-Host "Client Secret: $clientsecret"
 
+Write-Host "====AUTHORIZATION OBJECT===="
+$DevCenterEndpoint.Authorization | Get-Member * | Write-Host
+Write-Host "========"
+
+Write-Host "====AUTHORIZATION PARAMETERS OBJECT===="
 $DevCenterEndpoint.Authorization.Parameters | Get-Member * | Write-Host
+Write-Host "========"
 
 
 
