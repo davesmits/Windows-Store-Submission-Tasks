@@ -1,7 +1,7 @@
 {
     "id": "521D1D15-F5FB-4B83-A93B-B2FE44A9A286",
     "name": "Update Version",
-    "friendlyName": "Updat Version",
+    "friendlyName": "Update Version",
     "description": "Update Version in Manifest file",
     "helpMarkDown": "",
     "category": "Deploy",
