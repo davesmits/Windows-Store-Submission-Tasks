@@ -63,7 +63,7 @@
         }
     ],
     "execution": {
-        "PowerShell": {
+        "PowerShell3": {
             "target": "$(currentDirectory)\\deploytostore.ps1",
             "argumentFormat": "",
             "workingDirectory": "$(currentDirectory)"
