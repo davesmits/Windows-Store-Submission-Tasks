@@ -23,7 +23,7 @@
             "isExpanded": true
         }
     ],
-    "instanceNameFormat": "Publish to the Windows Store",
+    "instanceNameFormat": "Update Version Number",
     "inputs": [
         {
             "name": "manifestfile",
