@@ -72,7 +72,7 @@ function MakeFlightSubmission($teantId, $clientId, $clientSecret, $flightId)
 $DevCenterEndpoint = Get-ServiceEndpoint -Context $distributedTaskContext -Name $globalOptions.ServiceEndpoint
 $tenantId = $DevCenterEndpoint.tenantid;
 $clientid = $DevCenterEndpoint.clientid;
-$clientsecret = $DevCenterEndpoint.clientsecret;
+$clientsecret = $DevCenterEndpoint.apikey;
 
 if ($flightid){
     Write-Host "Flighted Submission"
