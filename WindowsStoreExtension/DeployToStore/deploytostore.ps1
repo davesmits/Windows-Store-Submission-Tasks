@@ -76,7 +76,7 @@ Write-Host "TenantId: $tenantId"
 $clientid = $DevCenterEndpoint.Authorization.Parameters.clientid;
 Write-Host "ClientId: $clientid"
 
-$clientsecret = $DevCenterEndpoint.Authorization.Parameters.apitoken;
+$clientsecret = $DevCenterEndpoint.apitoken;
 Write-Host "Client Secret: $clientsecret"
 
 
