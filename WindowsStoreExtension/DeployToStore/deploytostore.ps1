@@ -79,6 +79,8 @@ Write-Host "ClientId: $clientid"
 $clientsecret = $DevCenterEndpoint.apitoken;
 Write-Host "Client Secret: $clientsecret"
 
+$DevCenterEndpoint | Format-List * | Write-Host
+
 
 
 if ($flightid){
