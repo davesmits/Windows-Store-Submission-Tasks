@@ -24,4 +24,4 @@ $currentVersion = [Version]$manifestXml.Package.Identity.Version
 $updatedVersion = [Version]($currentVersion.Major.ToString() + '.' + $currentVersion.Minor + '.' + $buildid + '.' + 0)
 
 $manifestXml.Package.Identity.Version = [String]$updatedVersion
-$manifestXml.save($manifestfile.FullName)
+$manifestXml.save($file.FullName)
