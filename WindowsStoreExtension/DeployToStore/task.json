@@ -26,30 +26,12 @@
     "instanceNameFormat": "Publish to the Windows Store",
     "inputs": [
         {
-            "name": "tenantid",
-            "type": "string",
-            "label": "ID Tenant",
+            "name": "service endpoint",
+            "type": "connectedService:devcenter-auth-key",
+            "label": "Service Endpoint",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "ID of the AAD Tenant",
-            "groupName": "store"            
-        },
-        {
-            "name": "clientid",
-            "type": "string",
-            "label": "Client Id",
-            "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "Relative path from repo root of the grunt file script file to run.",
-            "groupName": "store"            
-        },
-        {
-            "name": "clientsecret",
-            "type": "string",
-            "label": "Client Secret",
-            "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "Client secret of the application",
+            "helpMarkDown": "Service Endpoint to Dev Center",
             "groupName": "store"            
         },
         {
