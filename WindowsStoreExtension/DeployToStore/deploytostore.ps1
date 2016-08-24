@@ -4,18 +4,16 @@ param
    [Parameter(Mandatory=$true)][string] $serviceendpoint,
    [Parameter(Mandatory=$true)][string] $appid,
    [Parameter(Mandatory=$true)][string] $flightid,
-   [Parameter(Mandatory=$true)][string] $fileurl
+   [Parameter(Mandatory=$true)][string] $file
 )
 
 $ErrorActionPreference = "Stop"
 
+Add-Type -AssemblyName System.Web     
+
 function MakeSubmission($tenantId, $clientId, $clientSecret)
 {
-    $postValue = "grant_type=client_credentials&client_id=$clientId&client_secret=$clientSecret&resource=https://manage.devcenter.microsoft.com"
-	$url = "https://login.microsoftonline.com/$tenantId/oauth2/token"
-	$token = Invoke-RestMethod -Uri $url -Body $postValue -ContentType "application/x-www-form-urlencoded; charset=utf-8" -Method POST -UseBasicParsing
-
-    $accessToken = $token.access_token
+    $accessToken = GetAccessToken $clientId $clientSecret
     
     $applicationInfoUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid"
     $application = Invoke-RestMethod -Uri $applicationInfoUrl -Headers @{"Authorization" = "bearer $accessToken"} -Method GET -UseBasicParsing
@@ -25,63 +23,76 @@ function MakeSubmission($tenantId, $clientId, $clientSecret)
         throw "Already submission in progress"
     }
 
-    #Write-Host "accesstoken: $accessToken"
-
     $createSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/submissions"
     $submission = Invoke-RestMethod -Uri $createSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Method POST -UseBasicParsing 
 
 	#$updateSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/submissions/$submission.id"
     #$submission = Invoke-RestMethod -Uri $updateSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Body $submission -Method PUT -UseBasicParsing
 
-    $uploadurl = $submission.fileUploadUrl
+    UploadFile $file $submission.fileUploadUrl
 
-	$Body = [System.IO.File]::ReadAllBytes("C:\Dave\test.zip");
-	$Request = [System.Net.HttpWebRequest]::CreateHttp($uploadurl);
-	$Request.Method = 'PUT';
-	$Request.Headers.Add('x-ms-blob-type', 'BlockBlob')
-
-	$Request.ContentType = "application/octet-stream"
-	$Stream = $Request.GetRequestStream();
-	$Stream.Write($Body, 0, $Body.Length);
-	$Request.GetResponse();
-
-
-    #$updateSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/submissions/$submission.id"
-    #$submission = Invoke-RestMethod -Uri $updateSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Body $submission -Method PUT -UseBasicParsing
-
-    $commitSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/submissions/$submission.id/commit"
-    $commit = Invoke-RestMethod -Uri $commitSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"}  -Method POST -UseBasicParsing
+    #$commitSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/submissions/$submission.id/commit"
+    #$commit = Invoke-RestMethod -Uri $commitSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"}  -Method POST -UseBasicParsing
 }
 
-function MakeFlightSubmission($teantId, $clientId, $clientSecret, $flightId)
+function MakeFlightSubmission($tenantId, $clientId, $clientSecret, $flightId)
 {
-    $postValue = "grant_type=client_credentials&client_id=$clientId&client_secret=$clientSecret&resource=https://manage.devcenter.microsoft.com"
-	$url = "https://login.microsoftonline.com/$tenantId/oauth2/token"
-	$token = Invoke-RestMethod -Uri $url -Body $postValue -ContentType "application/x-www-form-urlencoded; charset=utf-8" -Method POST -UseBasicParsing
-
-    $accessToken = $token.access_token
-
+    $accessToken = GetAccessToken $clientId $clientSecret
+    
     $createSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/flights/$flightId/submissions"
     $submission = Invoke-RestMethod -Uri $createSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Method POST -UseBasicParsing 
 
 	#$updateSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/flights/$flightId/submissions/$submission.id"
     #$submission = Invoke-RestMethod -Uri $updateSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Body $submission -Method PUT -UseBasicParsing
 
-
-    $uploadurl = $submission.fileUploadUrl
-
-	$Body = [System.IO.File]::ReadAllBytes("C:\Dave\test.zip");
-	$Request = [System.Net.HttpWebRequest]::CreateHttp($uploadurl);
-	$Request.Method = 'PUT';
-	$Request.Headers.Add('x-ms-blob-type', 'BlockBlob')
-
-	$Request.ContentType = "application/octet-stream"
-	$Stream = $Request.GetRequestStream();
-	$Stream.Write($Body, 0, $Body.Length);
-	$Request.GetResponse();
+    UploadFile $file $submission.fileUploadUrl
 
     $commitSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/flights/$flightId/submissions/$submission.id/commit"
     $commit = Invoke-RestMethod -Uri $commitSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"}  -Method POST -UseBasicParsing
+}
+
+function GetAccessToken($clientId, $clientSecret)
+{
+    $postValue = "grant_type=client_credentials&client_id=$clientId&client_secret=$clientSecret&resource=https://manage.devcenter.microsoft.com"
+	$url = "https://login.microsoftonline.com/$tenantId/oauth2/token"
+	$token = Invoke-RestMethod -Uri $url -Body $postValue -ContentType "application/x-www-form-urlencoded; charset=utf-8" -Method POST -UseBasicParsing
+    $accessToken = $token.access_token
+    return $accessToken;
+}
+
+function UploadFile($file, $url)
+{
+    
+    $tempdir =  Split-Path $file | Join-Path -ChildPath "upload"
+    New-Item $tempdir -type directory
+    Copy-Item $file $tempdir
+
+    $destination = Split-Path $file | Join-Path -ChildPath "upload.zip"
+
+    Add-Type -assembly "system.io.compression.filesystem"
+    [io.compression.zipfile]::CreateFromDirectory($tempdir, $destination) 
+    
+    #Prepare zip
+    Add-Type -assembly "system.io.compression.filesystem"
+    [io.compression.zipfile]::CreateFromDirectory($Source, $destination) 
+    Try
+    {
+        #Send request
+        $Body = [System.IO.File]::ReadAllBytes($file);
+        $Request = [System.Net.HttpWebRequest]::CreateHttp($url);
+        $Request.Method = 'PUT';
+        $Request.Headers.Add('x-ms-blob-type', 'BlockBlob')
+
+        $Request.ContentType = "application/octet-stream"
+        $Stream = $Request.GetRequestStream();
+        $Stream.Write($Body, 0, $Body.Length);
+        $Request.GetResponse();
+    } 
+    Finally
+    {
+        Remove-Item $tempdir -Recurse
+        Remove-Item $destination
+    }
 }
 
 
@@ -92,18 +103,6 @@ $clientsecret = $DevCenterEndpoint.Authorization.Parameters.ApiToken;
 
 $clientId = [System.Web.HttpUtility]::UrlEncode($clientId)
 $clientSecret = [System.Web.HttpUtility]::UrlEncode($clientSecret) 
-
-#Write-Host "TenantId: $tenantId"
-#Write-Host "ClientId: $clientid"
-#Write-Host "Client Secret: $clientsecret"
-
-#Write-Host "====AUTHORIZATION OBJECT===="
-#$DevCenterEndpoint.Authorization | Get-Member * | Write-Host
-#Write-Host "========"
-
-#Write-Host "====AUTHORIZATION PARAMETERS OBJECT===="
-#$DevCenterEndpoint.Authorization.Parameters | Get-Member * | Write-Host
-#Write-Host "========"
 
 
 
