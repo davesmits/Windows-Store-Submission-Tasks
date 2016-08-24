@@ -53,9 +53,9 @@
             "groupName": "store"            
         },
         {
-            "name": "fileurl",
-            "type": "string",
-            "label": "Url of the zip file",
+            "name": "file",
+            "type": "filePath",
+            "label": "Appxupload",
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "URL to the zip file for the submission",
