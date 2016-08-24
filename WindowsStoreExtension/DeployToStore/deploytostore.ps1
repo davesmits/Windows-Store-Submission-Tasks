@@ -97,12 +97,12 @@ function UploadFile($file, $url)
 
 
 $DevCenterEndpoint = Get-ServiceEndpoint -Context $distributedTaskContext -Name $serviceendpoint
-$tenantId = $DevCenterEndpoint.Authorization.Parameters.tenantid;
+$tenantid = $DevCenterEndpoint.Authorization.Parameters.tenantid;
 $clientid = $DevCenterEndpoint.Authorization.Parameters.clientid;
 $clientsecret = $DevCenterEndpoint.Authorization.Parameters.ApiToken;
 
-$clientId = [System.Web.HttpUtility]::UrlEncode($clientId)
-$clientSecret = [System.Web.HttpUtility]::UrlEncode($clientSecret) 
+$clientid = [System.Web.HttpUtility]::UrlEncode($clientId)
+$clientsecret = [System.Web.HttpUtility]::UrlEncode($clientSecret) 
 
 
 
