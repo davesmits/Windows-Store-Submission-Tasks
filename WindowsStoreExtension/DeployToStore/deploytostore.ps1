@@ -24,7 +24,10 @@ function MakeSubmission($tenantId, $clientId, $clientSecret)
     }
 
     $createSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/submissions"
-    $submission = Invoke-RestMethod -Uri $createSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Method POST -UseBasicParsing 
+    $submission = Invoke-RestMethod -Uri $createSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Method POST -UseBasicParsing
+    
+    $newPackageVersion = AnalyzeAppxBundle $file
+    $oldPackageVersion = ""; 
 
 	#$updateSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/submissions/$submission.id"
     #$submission = Invoke-RestMethod -Uri $updateSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Body $submission -Method PUT -UseBasicParsing
@@ -40,7 +43,10 @@ function MakeFlightSubmission($tenantId, $clientId, $clientSecret, $flightId)
     $accessToken = GetAccessToken $clientId $clientSecret
     
     $createSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/flights/$flightId/submissions"
-    $submission = Invoke-RestMethod -Uri $createSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Method POST -UseBasicParsing 
+    $submission = Invoke-RestMethod -Uri $createSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Method POST -UseBasicParsing
+    
+    $newPackageVersion = AnalyzeAppxBundle $file
+    $oldPackageVersion = ""; 
 
 	#$updateSubmissionUrl = "https://manage.devcenter.microsoft.com/v1.0/my/applications/$appid/flights/$flightId/submissions/$submission.id"
     #$submission = Invoke-RestMethod -Uri $updateSubmissionUrl -Headers @{"Authorization" = "bearer $accessToken"} -Body $submission -Method PUT -UseBasicParsing
@@ -93,6 +99,113 @@ function UploadFile($file, $url)
         Remove-Item $tempdir -Recurse
         Remove-Item $destination
     }
+}
+
+function AnalyzeAppxUpload($appxUpload)
+{
+    $tempfile = [System.IO.Path]::GetTempPath()| Join-Path -ChildPath ([System.Guid]::NewGuid())
+    Try
+    {
+        Add-Type -assembly "system.io.compression.filesystem"
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($appxUpload, $tempfile)
+
+        $result = Get-ChildItem $tempfile | where {$_.Extension -eq ".appxbundle" }
+        $version;
+        foreach($path in $result)
+        {
+            $newVersion = AnalyzeAppxBundle $path.FullName
+            
+            if (!$version)
+            {
+                $version = $newVersion
+            }
+            else
+            {
+                if ((CompareVersion $version $newVersion) -eq -1)
+                {
+                    $version = $newVersion
+                }
+            }   
+        }
+        return $version;
+    }
+    Finally
+    {
+        Remove-Item $tempfile -Recurse
+    }
+}
+
+function AnalyzeAppxBundle($appxBundle)
+{
+    
+    $tempfile = [System.IO.Path]::GetTempPath()| Join-Path -ChildPath ([System.Guid]::NewGuid())
+    Try
+    {
+        Add-Type -assembly "system.io.compression.filesystem"
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($appxBundle, $tempfile)
+        
+        $result = Get-ChildItem $tempfile -Recurse | where {$_.Extension -eq ".appx" }
+        $version;
+        foreach($path in $result)
+        {
+            $newVersion = AnalyzeAppx $path.FullName
+            
+            if (!$version)
+            {
+                $version = $newVersion
+            }
+            else
+            {
+                if ((CompareVersion $version $newVersion) -eq -1)
+                {
+                    $version = $newVersion
+                }
+            }   
+        }
+        return $version;
+    }
+    Finally
+    {
+        Remove-Item $tempfile -Recurse
+    }
+}
+
+function AnalyzeAppx($appx)
+{
+    $tempfile = [System.IO.Path]::GetTempPath() | Join-Path -ChildPath ([System.Guid]::NewGuid())
+    Try
+    {
+        Add-Type -assembly "system.io.compression.filesystem"
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($appx, $tempfile)
+
+        $result = Get-ChildItem $tempfile -Recurse | where {$_.Name -eq "AppxManifest.xml" }
+        [xml]$appxManifestXml = Get-Content -Path $result.FullName
+
+        return $appxManifestXml.Package.Dependencies.TargetDeviceFamily.MinVersion
+    }
+    Finally
+    {
+        Remove-Item $tempfile -Recurse
+    }
+}
+
+function CompareVersion($version1, $version2)
+{
+    $oldVersionIndex = $version1.Split("{.}")
+    $newVersionIndex = $version2.Split("{.}")
+
+    $index = 0;
+    do
+    {
+        $num1 = [convert]::ToInt32($oldVersionIndex[$index])
+        $num2 = [convert]::ToInt32($newVersionIndex[$index])
+
+        $result = $num1.CompareTo($num2);
+
+        $index++
+    }
+    while($result -eq 0 -and $index -lt 4)
+    return $result
 }
 
 
