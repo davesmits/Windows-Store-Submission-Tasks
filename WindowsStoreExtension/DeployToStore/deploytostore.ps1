@@ -18,4 +18,5 @@ $clientsecret = $DevCenterEndpoint.Authorization.Parameters.ApiToken;
 #    $flightid = "0";
 #}
 
-StoreSubmission.exe "$tenantid" "$clientid" "$clientsecret" "$appid" "$flightid" "$file"
+Write-Host "calling: .\StoreSubmission.exe ""$tenantid"" ""$clientid"" ""$clientsecret"" ""$appid"" ""$flightid"" ""$file"""
+.\StoreSubmission.exe "$tenantid" "$clientid" "$clientsecret" "$appid" "$flightid" "$file"

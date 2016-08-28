@@ -63,6 +63,7 @@ namespace StoreSubmission
             if (appInfo.pendingApplicationSubmission != null)
             {
                 Console.WriteLine("Submission already in progresss");
+                throw new Exception();
                 return;
             }
 
@@ -88,6 +89,7 @@ namespace StoreSubmission
             if (appInfo.pendingApplicationSubmission != null)
             {
                 Console.WriteLine("Submission already in progresss");
+                throw new Exception();
                 return;
             }
 
