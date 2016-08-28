@@ -52,15 +52,15 @@
             "helpMarkDown": "Flight Id, leave blank for a non flighted submission",
             "groupName": "store"            
         },
-        {
-            "name": "file",
-            "type": "filePath",
-            "label": "Appxupload",
-            "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "URL to the zip file for the submission",
-            "groupName": "store"            
-        }
+      {
+        "name": "fileMask",
+        "type": "filePath",
+        "label": "Appxupload",
+        "defaultValue": "",
+        "required": true,
+        "helpMarkDown": "URL to the zip file for the submission",
+        "groupName": "store"
+      }
     ],
     "execution": {
         "PowerShell3": {
