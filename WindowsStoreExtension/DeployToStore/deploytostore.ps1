@@ -4,7 +4,7 @@ param
    [Parameter(Mandatory=$true)][string] $serviceendpoint,
    [Parameter(Mandatory=$true)][string] $appid,
    [Parameter(Mandatory=$false)][string] $flightid,
-   [Parameter(Mandatory=$true)][string] $fileMask
+   [Parameter(Mandatory=$true)][string] $filemask
 )
 
 
