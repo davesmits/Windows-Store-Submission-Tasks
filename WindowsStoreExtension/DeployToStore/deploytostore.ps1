@@ -3,7 +3,7 @@ param
 (
    [Parameter(Mandatory=$true)][string] $serviceendpoint,
    [Parameter(Mandatory=$true)][string] $appid,
-   [Parameter(Mandatory=$true)][string] $flightid,
+   [Parameter(Mandatory=$false)][string] $flightid,
    [Parameter(Mandatory=$true)][string] $file
 )
 
