@@ -20,6 +20,7 @@ namespace StoreSubmission
             string flightId = "";
             string filePath = "C:\\Dave\\ATC.Navigation_1.1.54.0_x86_x64_arm_bundle.appxupload";
 #else
+            Console.WriteLine("number of args: " + args.Length);
             string tenantId = args[0];
             string clientId = args[1];
             string clientSecret = args[2];
@@ -33,7 +34,7 @@ namespace StoreSubmission
                 return;
             }
 
-            if (flightId == "0")
+            if (flightId == "-")
                 flightId = string.Empty;
 
             UploadPackageAsync(tenantId, clientId, clientSecret, appId, flightId, filePath).Wait();
