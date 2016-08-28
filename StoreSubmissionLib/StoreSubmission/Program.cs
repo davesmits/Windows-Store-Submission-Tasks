@@ -51,6 +51,7 @@ namespace StoreSubmission
             }
             else
             {
+                await StartFlightSubmission(token, appId, flightId, filePath);
             }
         }
 
@@ -78,6 +79,32 @@ namespace StoreSubmission
             await submissionService.CommitSubmissionAsync(token.access_token, appId, submission);
             Console.WriteLine("Submission commited");
         }
+
+        private static async Task StartFlightSubmission(AuthenticationResult token, string appId, string flightId, string filePath)
+        {
+            SubmissionService submissionService = new SubmissionService();
+            var appInfo = await submissionService.GetAppAsync(token.access_token, appId, flightId);
+
+            if (appInfo.pendingApplicationSubmission != null)
+            {
+                Console.WriteLine("Submission already in progresss");
+                return;
+            }
+
+            Submission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId, flightId);
+            Console.WriteLine("Submission created");
+
+            UpdateSubmission(submission, filePath);
+            submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, flightId, submission);
+            Console.WriteLine("Submission updated with package");
+
+            await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
+            Console.WriteLine("Appxupload uploaded");
+
+            await submissionService.CommitSubmissionAsync(token.access_token, appId, flightId, submission);
+            Console.WriteLine("Submission commited");
+        }
+
 
         private static void UpdateSubmission(Submission submission, string filePath)
         {

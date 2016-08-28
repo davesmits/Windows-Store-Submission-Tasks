@@ -14,8 +14,8 @@ $tenantid = $DevCenterEndpoint.Authorization.Parameters.tenantid;
 $clientid = $DevCenterEndpoint.Authorization.Parameters.clientid;
 $clientsecret = $DevCenterEndpoint.Authorization.Parameters.ApiToken;
 
-if ($flightid){
-    $flightid = "0";
-}
+#if ($flightid){
+#    $flightid = "0";
+#}
 
-StoreSubmission.exe $tenantid $clientid $clientsecret $appid $flightid $file
+StoreSubmission.exe "$tenantid" "$clientid" "$clientsecret" "$appid" "$flightid" "$file"
