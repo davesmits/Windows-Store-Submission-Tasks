@@ -101,12 +101,13 @@ namespace StoreSubmissionLib
 
         public async Task UploadFileAsync(string targetUrl, string filePath)
         {
-            string tempDir = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid().ToString()}");
+            string tempDir = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid().ToString()}\\");
             string zipFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid().ToString()}.zip");
 
             try
             {
-                File.Copy(filePath, tempDir);
+                Directory.CreateDirectory(tempDir);
+                File.Copy(filePath, Path.Combine(tempDir, Path.GetFileName(filePath)));
                 ZipFile.CreateFromDirectory(tempDir, zipFile);
 
                 using (HttpClient client = new HttpClient())
@@ -127,7 +128,7 @@ namespace StoreSubmissionLib
             }
             finally
             {
-                Directory.Delete(tempDir);
+                Directory.Delete(tempDir, true);
                 File.Delete(zipFile);
             }
         }

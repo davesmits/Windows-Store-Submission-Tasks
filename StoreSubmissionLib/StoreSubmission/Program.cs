@@ -16,7 +16,7 @@ namespace StoreSubmission
             string tenantId = "61e615f3-161b-4bda-a67a-407317766d1f";
             string clientId = "8e577dbb-5c5b-4958-ab5b-71ccbb853003";
             string clientSecret = "u+wRbf0vs+Kb1UEmB3c9DBuGOQ7+1mQ3HjggkJWFSP4=";
-            string appId = "9nblggh1rmqv".ToUpper();
+            string appId = "9nblggh1rmqv";
             string flightId = "";
             string filePath = "C:\\Dave\\ATC.Navigation_1.1.54.0_x86_x64_arm_bundle.appxupload";
 #else
