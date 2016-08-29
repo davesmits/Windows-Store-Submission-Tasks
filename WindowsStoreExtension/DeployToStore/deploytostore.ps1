@@ -12,17 +12,19 @@ param()
 $filepath = Get-VstsInput -Name filepath
 $appid = Get-VstsInput -Name appid
 $flightid = Get-VstsInput -Name flightid
+$DevCenterEndpoint = Get-VstsEndpoint -Name serviceendpoint
 
-
-
-$DevCenterEndpoint = Get-VstsEndpoint -Name "serviceendpoint"
-
+Write-Host "Devcenter:"
 $DevCenterEndpoint | Format-List *
 
 #$DevCenterEndpoint =  Get-ServiceEndpoint -Context $distributedTaskContext -Name $serviceendpoint
 $tenantid = $DevCenterEndpoint.Auth.Parameters.tenantid;
 $clientid = $DevCenterEndpoint.Auth.Parameters.clientid;
 $clientsecret = $DevCenterEndpoint.Auth.Parameters.ApiToken;
+
+Write-Host "Tenant: $tenantid"
+Write-Host "Client: $clientid"
+Write-Host "Secret: $clientsecret"
 
 if (-Not $flightid){
     $flightid = "-";
