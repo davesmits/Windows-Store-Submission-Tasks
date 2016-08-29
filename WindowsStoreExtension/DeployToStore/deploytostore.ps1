@@ -15,8 +15,8 @@ $flightid = Get-VstsInput -Name flightid
 
 
 
-$DevCenterEndpoint = Get-VstsEndpoint -Name $serviceendpoint
-#$DevCenterEndpoint =  Get-ServiceEndpoint -Context $distributedTaskContext -Name $serviceendpoint
+#$DevCenterEndpoint = Get-VstsEndpoint -Name $serviceendpoint
+$DevCenterEndpoint =  Get-ServiceEndpoint -Context $distributedTaskContext -Name $serviceendpoint
 $tenantid = $DevCenterEndpoint.Authorization.Parameters.tenantid;
 $clientid = $DevCenterEndpoint.Authorization.Parameters.clientid;
 $clientsecret = $DevCenterEndpoint.Authorization.Parameters.ApiToken;
