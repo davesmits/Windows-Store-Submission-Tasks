@@ -45,10 +45,8 @@
         }
     ],
     "execution": {
-        "PowerShell": {
-            "target": "$(currentDirectory)\\UpdateVersion.ps1",
-            "argumentFormat": "",
-            "workingDirectory": "$(currentDirectory)"
+        "PowerShell3": {
+            "target": "UpdateVersion.ps1"
         }
     }
 }
