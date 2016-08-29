@@ -4,14 +4,14 @@ param()
 #   [Parameter(Mandatory=$true)][string] $filepath,
 #   [Parameter(Mandatory=$true)][string] $serviceendpoint,
 #   [Parameter(Mandatory=$true)][string] $appid,
-#   [Parameter(Mandatory=$false)][string] $flightid 
+#   [Parameter(Mandatory=$false)][string] $flightname
 #)
 
 
 #$serviceendpoint = Get-VstsInput -Name serviceendpoint
 $filepath = Get-VstsInput -Name filepath
 $appid = Get-VstsInput -Name appid
-$flightid = Get-VstsInput -Name flightid
+$flightname = Get-VstsInput -Name flightname
 $serviceendpoint = Get-VstsInput -Name serviceendpoint
 
 $DevCenterEndpoint = Get-VstsEndpoint -Name "$serviceendpoint"
@@ -24,8 +24,8 @@ $clientsecret = $DevCenterEndpoint.Auth.Parameters.ApiToken;
 #Write-Host "Client: $clientid"
 #Write-Host "Secret: $clientsecret"
 
-if (-Not $flightid){
-    $flightid = "-";
+if (-Not $flightname){
+    $flightname = "-";
 }
 
 $file = Find-VstsFiles -LegacyPattern $filepath
@@ -43,5 +43,5 @@ if (-Not $file)
     throw "No files found"
 }
 
-Write-Host "calling: .\StoreSubmission.exe ""$tenantid"" ""$clientid"" ""$clientsecret"" ""$appid"" ""$flightid"" ""$file"""
-.\StoreSubmission.exe "$tenantid" "$clientid" "$clientsecret" "$appid" "$flightid" "$file"
+Write-Host "calling: .\StoreSubmission.exe ""$tenantid"" ""$clientid"" ""$clientsecret"" ""$appid"" ""$flightname"" ""$file"""
+.\StoreSubmission.exe "$tenantid" "$clientid" "$clientsecret" "$appid" "$flightname" "$file"

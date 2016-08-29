@@ -4,12 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace StoreSubmissionLib
 {
@@ -43,11 +40,15 @@ namespace StoreSubmissionLib
             return restClient.SendRequestAsync<App>(HttpMethod.Get, new Uri(url));
         }
 
-        public Task<App> GetAppAsync(string token, string appId, string flightId)
+        public async Task<Flight> GetFlightsAsync(string token, string appId, string flightName)
         {
-            string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}";
             var restClient = new RestServiceClient(token);
-            return restClient.SendRequestAsync<App>(HttpMethod.Get, new Uri(url));
+
+            string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/listflights";
+            var flights = await restClient.SendRequestAsync<Flights>(HttpMethod.Get, new Uri(url));
+
+
+            return flights.value.Single(x => x.friendlyName == flightName);
         }
 
         public Task<Submission> CreateNewSubmissionAsync(string token, string appId)
@@ -57,11 +58,11 @@ namespace StoreSubmissionLib
             return restClient.SendRequestAsync<Submission>(HttpMethod.Post, new Uri(url));
         }
 
-        public Task<Submission> CreateNewSubmissionAsync(string token, string appId, string flightId)
+        public Task<FlightSubmission> CreateNewSubmissionAsync(string token, string appId, string flightId)
         {
             string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}/submissions";
             var restClient = new RestServiceClient(token);
-            return restClient.SendRequestAsync<Submission>(HttpMethod.Post, new Uri(url));
+            return restClient.SendRequestAsync<FlightSubmission>(HttpMethod.Post, new Uri(url));
         }
 
         public Task<Submission> UpdateSubmissionAsync(string token, string appId, Submission submission)
@@ -71,11 +72,11 @@ namespace StoreSubmissionLib
             return restClient.SendRequestAsync<Submission, Submission>(HttpMethod.Put, new Uri(url), submission);
         }
 
-        public Task<Submission> UpdateSubmissionAsync(string token, string appId, string flightId, Submission submission)
+        public Task<FlightSubmission> UpdateSubmissionAsync(string token, string appId, string flightId, FlightSubmission submission)
         {
             string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}/submissions/{submission.id}";
             var restClient = new RestServiceClient(token);
-            return restClient.SendRequestAsync<Submission, Submission>(HttpMethod.Put, new Uri(url), submission);
+            return restClient.SendRequestAsync<FlightSubmission, FlightSubmission>(HttpMethod.Put, new Uri(url), submission);
         }
 
         public Task DeleteSubmissionAsync(string token, string appId, Submission submission)
@@ -92,7 +93,7 @@ namespace StoreSubmissionLib
             return restClient.SendRequestAsync(HttpMethod.Post, new Uri(url));
         }
 
-        public Task CommitSubmissionAsync(string token, string appId, string flightId, Submission submission)
+        public Task CommitSubmissionAsync(string token, string appId, string flightId, FlightSubmission submission)
         {
             string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}/submissions/{submission.id}/commit";
             var restClient = new RestServiceClient(token);

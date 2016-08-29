@@ -44,12 +44,12 @@
       "groupName": "store"
     },
     {
-      "name": "flightid",
+      "name": "flightname",
       "type": "string",
-      "label": "Flight Id",
+      "label": "Flight Name",
       "defaultValue": "",
       "required": false,
-      "helpMarkDown": "Flight Id, leave blank for a non flighted submission",
+      "helpMarkDown": "Flight Name, leave blank for a non flighted submission",
       "groupName": "store"
     },
     {

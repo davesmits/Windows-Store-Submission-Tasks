@@ -17,7 +17,7 @@ namespace StoreSubmission
             string clientId = "8e577dbb-5c5b-4958-ab5b-71ccbb853003";
             string clientSecret = "u+wRbf0vs+Kb1UEmB3c9DBuGOQ7+1mQ3HjggkJWFSP4=";
             string appId = "9nblggh1rmqv";
-            string flightId = "";
+            string flightName = "AlphaVersion";
             string filePath = "C:\\Dave\\ATC.Navigation_1.1.54.0_x86_x64_arm_bundle.appxupload";
 #else
             Console.WriteLine("number of args: " + args.Length);
@@ -25,7 +25,7 @@ namespace StoreSubmission
             string clientId = args[1];
             string clientSecret = args[2];
             string appId = args[3];
-            string flightId = args[4];
+            string flightName = args[4];
             string filePath = args[5];
 #endif
             if (!File.Exists(filePath))
@@ -34,25 +34,25 @@ namespace StoreSubmission
                 return;
             }
 
-            if (flightId == "-")
-                flightId = string.Empty;
+            if (flightName == "-")
+                flightName = string.Empty;
 
-            UploadPackageAsync(tenantId, clientId, clientSecret, appId, flightId, filePath).Wait();
+            UploadPackageAsync(tenantId, clientId, clientSecret, appId, flightName, filePath).Wait();
         }
 
-        static async Task UploadPackageAsync(string tenantId, string clientId, string clientSecret, string appId, string flightId, string filePath)
+        static async Task UploadPackageAsync(string tenantId, string clientId, string clientSecret, string appId, string flightName, string filePath)
         {
             SubmissionService submissionService = new SubmissionService();
             var token = await submissionService.GetAccessToken(tenantId, clientId, clientSecret);
             Console.WriteLine("Access token aquired");
 
-            if (string.IsNullOrEmpty(flightId))
+            if (string.IsNullOrEmpty(flightName))
             {
                 await StartNonFlightSubmission(token, appId, filePath);
             }
             else
             {
-                await StartFlightSubmission(token, appId, flightId, filePath);
+                await StartFlightSubmission(token, appId, flightName, filePath);
             }
         }
 
@@ -81,28 +81,28 @@ namespace StoreSubmission
             Console.WriteLine("Submission commited");
         }
 
-        private static async Task StartFlightSubmission(AuthenticationResult token, string appId, string flightId, string filePath)
+        private static async Task StartFlightSubmission(AuthenticationResult token, string appId, string flightName, string filePath)
         {
             SubmissionService submissionService = new SubmissionService();
-            var appInfo = await submissionService.GetAppAsync(token.access_token, appId, flightId);
+            var appInfo = await submissionService.GetFlightsAsync(token.access_token, appId, flightName);
 
-            if (appInfo.pendingApplicationSubmission != null)
+            if (appInfo.pendingFlightSubmission != null)
             {
                 Console.WriteLine("Submission already in progresss");
                 throw new Exception();
             }
 
-            Submission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId, flightId);
+            FlightSubmission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId, appInfo.flightId);
             Console.WriteLine("Submission created");
 
             UpdateSubmission(submission, filePath);
-            submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, flightId, submission);
+            submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
             Console.WriteLine("Submission updated with package");
 
             await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
             Console.WriteLine("Appxupload uploaded");
 
-            await submissionService.CommitSubmissionAsync(token.access_token, appId, flightId, submission);
+            await submissionService.CommitSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
             Console.WriteLine("Submission commited");
         }
 
@@ -111,6 +111,7 @@ namespace StoreSubmission
         {
             var appxUtils = new AppxUtils();
             var newVersion = appxUtils.AnalyzeAppxUpload(filePath);
+
 
             foreach (var package in submission.applicationPackages)
             {
@@ -145,6 +146,48 @@ namespace StoreSubmission
                 fileStatus = "PendingUpload",
                 fileName = Path.GetFileName(filePath)
             });
+
         }
+
+        private static void UpdateSubmission(FlightSubmission submission, string filePath)
+        {
+            var appxUtils = new AppxUtils();
+            var newVersion = appxUtils.AnalyzeAppxUpload(filePath);
+
+            foreach (var package in submission.flightPackages)
+            {
+                //not need the package version but the min target version of windows
+                //var currentVersion = new Version(package.version);
+                //if (currentVersion == newVersion)
+                //{
+                //    package.fileStatus = "PendingDelete";
+                //}
+            }
+
+            ApplicationPackage highestPackage = null;
+            foreach (var package in submission.flightPackages)
+            {
+                if (highestPackage == null)
+                    highestPackage = package;
+                else
+                {
+                    var currentPackage = new Version(highestPackage.version);
+                    var newPackage = new Version(package.version);
+                    if (newPackage > currentPackage)
+                        highestPackage = package;
+                }
+            }
+            if (highestPackage != null)
+            {
+                highestPackage.fileStatus = "PendingDelete";
+            }
+
+            submission.flightPackages.Insert(0, new ApplicationPackage
+            {
+                fileStatus = "PendingUpload",
+                fileName = Path.GetFileName(filePath)
+            });
+        }
+
     }
 }
