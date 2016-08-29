@@ -53,7 +53,7 @@
       "groupName": "store"
     },
     {
-      "name": "filemask",
+      "name": "filepath",
       "type": "filePath",
       "label": "Appxupload",
       "defaultValue": "",

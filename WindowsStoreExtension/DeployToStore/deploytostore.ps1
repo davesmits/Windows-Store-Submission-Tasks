@@ -1,7 +1,7 @@
 ﻿[cmdletbinding()]
 param
 (
-   [Parameter(Mandatory=$true)][string] $filemask,
+   [Parameter(Mandatory=$true)][string] $filepath,
    [Parameter(Mandatory=$true)][string] $serviceendpoint,
    [Parameter(Mandatory=$true)][string] $appid,
    [Parameter(Mandatory=$false)][string] $flightid 
@@ -19,7 +19,7 @@ if (-Not $flightid){
     $flightid = "-";
 }
 
-$file = Find-VstsFiles -LegacyPattern $fileMask
+$file = Find-VstsFiles -LegacyPattern $filepath
 
 if ($file -is [system.array] -and $file.length -gt 1)
 {
