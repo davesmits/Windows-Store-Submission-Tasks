@@ -40,7 +40,11 @@ if ($file -is [system.array] -and $file.length -gt 1)
 }
 if ($file -is [system.array] -and $file.length -eq 0)
 {
-    throw "No files found: $file"
+    throw "No files found"
+}
+if (-Not $file)
+{
+    throw "No files found"
 }
 
 Write-Host "calling: .\StoreSubmission.exe ""$tenantid"" ""$clientid"" ""$clientsecret"" ""$appid"" ""$flightid"" ""$file"""
