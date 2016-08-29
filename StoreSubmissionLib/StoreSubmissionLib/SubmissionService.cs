@@ -93,11 +93,12 @@ namespace StoreSubmissionLib
             return restClient.SendRequestAsync(HttpMethod.Post, new Uri(url));
         }
 
-        public Task CommitSubmissionAsync(string token, string appId, string flightId, FlightSubmission submission)
+        public async Task CommitSubmissionAsync(string token, string appId, string flightId, FlightSubmission submission)
         {
             string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}/submissions/{submission.id}/commit";
             var restClient = new RestServiceClient(token);
-            return restClient.SendRequestAsync(HttpMethod.Post, new Uri(url));
+            var res = await restClient.SendRequestAsync<object>(HttpMethod.Post, new Uri(url));
+            string t = res.ToString();
         }
 
         public async Task UploadFileAsync(string targetUrl, string filePath)

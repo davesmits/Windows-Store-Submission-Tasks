@@ -74,6 +74,7 @@ namespace StoreSubmission
             submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, submission);
             Console.WriteLine("Submission updated with package");
 
+            await Task.Delay(TimeSpan.FromSeconds(20));
             await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
             Console.WriteLine("Appxupload uploaded");
 
@@ -99,6 +100,7 @@ namespace StoreSubmission
             submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
             Console.WriteLine("Submission updated with package");
 
+            await Task.Delay(TimeSpan.FromSeconds(20));
             await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
             Console.WriteLine("Appxupload uploaded");
 
