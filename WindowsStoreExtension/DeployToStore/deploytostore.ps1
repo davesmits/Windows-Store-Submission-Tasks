@@ -1,10 +1,10 @@
 ﻿[cmdletbinding()]
 param
 (
+   [Parameter(Mandatory=$true)][string] $filemask,
    [Parameter(Mandatory=$true)][string] $serviceendpoint,
    [Parameter(Mandatory=$true)][string] $appid,
-   [Parameter(Mandatory=$false)][string] $flightid,
-   [Parameter(Mandatory=$true)][string] $filemask
+   [Parameter(Mandatory=$false)][string] $flightid 
 )
 
 
