@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -97,38 +99,41 @@ namespace StoreSubmissionLib
             return restClient.SendRequestAsync(HttpMethod.Post, new Uri(url));
         }
 
-
         public async Task UploadFileAsync(string targetUrl, string filePath)
         {
-            //    $Body = [System.IO.File]::ReadAllBytes($file);
-            //$Request = [System.Net.HttpWebRequest]::CreateHttp($url);
-            //$Request.Method = 'PUT';
-            //$Request.Headers.Add('x-ms-blob-type', 'BlockBlob')
+            string tempDir = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid().ToString()}");
+            string zipFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid().ToString()}.zip");
 
-            //$Request.ContentType = "application/octet-stream"
-            //$Stream = $Request.GetRequestStream();
-            //$Stream.Write($Body, 0, $Body.Length);
-            //$Request.GetResponse();
-
-            using (HttpClient client = new HttpClient())
+            try
             {
-                using (var fileStream = new FileStream(filePath, FileMode.Open))
+                File.Copy(filePath, tempDir);
+                ZipFile.CreateFromDirectory(tempDir, zipFile);
+
+                using (HttpClient client = new HttpClient())
                 {
-                    var content = new System.Net.Http.StreamContent(fileStream);
-                    content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+                    using (var fileStream = new FileStream(zipFile, FileMode.Open))
+                    {
+                        var content = new StreamContent(fileStream);
+                        content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, targetUrl);
-                    request.Headers.Add("x-ms-blob-type", "BlockBlob");
-                    request.Content = content;
+                        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, targetUrl);
+                        request.Headers.Add("x-ms-blob-type", "BlockBlob");
+                        request.Content = content;
 
-                    var response = await client.SendAsync(request);
-                    response.EnsureSuccessStatusCode();
+                        var response = await client.SendAsync(request);
+                        response.EnsureSuccessStatusCode();
+                    }
                 }
+            }
+            finally
+            {
+                Directory.Delete(tempDir);
+                File.Delete(zipFile);
             }
         }
 
-       
 
-        
+
+
     }
 }
