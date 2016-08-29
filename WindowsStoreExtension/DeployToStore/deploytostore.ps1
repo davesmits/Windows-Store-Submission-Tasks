@@ -18,18 +18,16 @@ if (-Not $flightid){
     $flightid = "-";
 }
 
-$files = Find-VstsFiles $fileMask
+$file = Find-VstsFiles -LegacyPattern $fileMask
 
-if ($files.length == 0)
+if ($file -is [system.array] -and $file.length -gt 1)
 {
-    throw "n0 files found"
-    }
-
-if ($files.length > 1)
+    throw "More then one file found"
+}
+if ($file -is [system.array] -and $file.length -eq 0)
 {
-    throw "too many files found"
+    throw "No files found"
 }
 
-$file = $files[0]
 Write-Host "calling: .\StoreSubmission.exe ""$tenantid"" ""$clientid"" ""$clientsecret"" ""$appid"" ""$flightid"" ""$file"""
 .\StoreSubmission.exe "$tenantid" "$clientid" "$clientsecret" "$appid" "$flightid" "$file"
