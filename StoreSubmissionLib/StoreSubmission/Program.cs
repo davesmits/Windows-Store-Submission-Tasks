@@ -65,7 +65,6 @@ namespace StoreSubmission
             {
                 Console.WriteLine("Submission already in progresss");
                 throw new Exception();
-                return;
             }
 
             Submission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId);
@@ -91,7 +90,6 @@ namespace StoreSubmission
             {
                 Console.WriteLine("Submission already in progresss");
                 throw new Exception();
-                return;
             }
 
             Submission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId, flightId);
@@ -124,7 +122,7 @@ namespace StoreSubmission
                 //}
             }
 
-            Applicationpackage highestPackage = null;
+            ApplicationPackage highestPackage = null;
             foreach (var package in submission.applicationPackages)
             {
                 if (highestPackage == null)
@@ -142,7 +140,7 @@ namespace StoreSubmission
                 highestPackage.fileStatus = "PendingDelete";
             }
 
-            submission.applicationPackages.Insert(0, new Applicationpackage
+            submission.applicationPackages.Insert(0, new ApplicationPackage
             {
                 fileStatus = "PendingUpload",
                 fileName = Path.GetFileName(filePath)

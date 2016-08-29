@@ -1,7 +1,8 @@
-Param(
-    [String]$manifestfile,
-    [String]$buildid
-)
+[cmdletbinding()]
+param()
+
+$manifestfile = Get-VstsInput -Name manifestfile
+$buildid = Get-VstsInput -Name buildid
 
   
 if (-Not $manifestfile) {

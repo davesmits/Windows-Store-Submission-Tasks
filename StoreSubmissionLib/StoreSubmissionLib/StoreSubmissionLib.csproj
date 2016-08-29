@@ -49,7 +49,6 @@
     <Compile Include="App.cs" />
     <Compile Include="AuthenticationResult.cs" />
     <Compile Include="AppxUtils.cs" />
-    <Compile Include="HttpStringContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestServiceClient.cs" />
     <Compile Include="Submission.cs" />
