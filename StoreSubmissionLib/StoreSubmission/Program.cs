@@ -65,7 +65,6 @@ namespace StoreSubmission
             {
                 Console.WriteLine("Submission already in progresss");
                 throw new Exception();
-                return;
             }
 
             Submission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId);
@@ -91,7 +90,6 @@ namespace StoreSubmission
             {
                 Console.WriteLine("Submission already in progresss");
                 throw new Exception();
-                return;
             }
 
             Submission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId, flightId);

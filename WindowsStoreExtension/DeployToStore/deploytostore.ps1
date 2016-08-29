@@ -12,7 +12,9 @@ param()
 $filepath = Get-VstsInput -Name filepath
 $appid = Get-VstsInput -Name appid
 $flightid = Get-VstsInput -Name flightid
-$DevCenterEndpoint = Get-VstsEndpoint -Name serviceendpoint
+$serviceendpoint = Get-VstsInput -Name serviceendpoint
+
+$DevCenterEndpoint = Get-VstsEndpoint -Name "$serviceendpoint"
 
 Write-Host "Devcenter:"
 $DevCenterEndpoint | Format-List *
