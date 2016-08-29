@@ -6,14 +6,6 @@ using System.Threading.Tasks;
 
 namespace StoreSubmissionLib
 {
-
-    public class Apps
-    {
-        public string nextLink { get; set; }
-        public App[] value { get; set; }
-        public int totalCount { get; set; }
-    }
-
     public class App
     {
         public string id { get; set; }
