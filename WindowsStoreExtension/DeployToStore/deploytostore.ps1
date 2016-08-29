@@ -29,11 +29,11 @@ $file = Find-VstsFiles -LegacyPattern $filepath
 
 if ($file -is [system.array] -and $file.length -gt 1)
 {
-    throw "More then one file found"
+    throw "More then one file found: $file"
 }
 if ($file -is [system.array] -and $file.length -eq 0)
 {
-    throw "No files found"
+    throw "No files found: $file"
 }
 
 Write-Host "calling: .\StoreSubmission.exe ""$tenantid"" ""$clientid"" ""$clientsecret"" ""$appid"" ""$flightid"" ""$file"""
