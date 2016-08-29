@@ -16,10 +16,13 @@ $flightid = Get-VstsInput -Name flightid
 
 
 $DevCenterEndpoint = Get-VstsEndpoint -Name "serviceendpoint"
+
+$DevCenterEndpoint | Format-List *
+
 #$DevCenterEndpoint =  Get-ServiceEndpoint -Context $distributedTaskContext -Name $serviceendpoint
-$tenantid = $DevCenterEndpoint.Authorization.Parameters.tenantid;
-$clientid = $DevCenterEndpoint.Authorization.Parameters.clientid;
-$clientsecret = $DevCenterEndpoint.Authorization.Parameters.ApiToken;
+$tenantid = $DevCenterEndpoint.Auth.Parameters.tenantid;
+$clientid = $DevCenterEndpoint.Auth.Parameters.clientid;
+$clientsecret = $DevCenterEndpoint.Auth.Parameters.ApiToken;
 
 if (-Not $flightid){
     $flightid = "-";
