@@ -26,7 +26,7 @@ namespace StoreSubmissionLib
         public string status { get; set; }
         public Statusdetails statusDetails { get; set; }
         public string fileUploadUrl { get; set; }
-        public List<Applicationpackage> applicationPackages { get; set; }
+        public List<ApplicationPackage> applicationPackages { get; set; }
         public string enterpriseLicensing { get; set; }
         public bool allowMicrosoftDecideAppAvailabilityToFutureDeviceFamilies { get; set; }
         public Allowtargetfuturedevicefamilies allowTargetFutureDeviceFamilies { get; set; }
@@ -93,7 +93,7 @@ namespace StoreSubmissionLib
         public bool Holographic { get; set; }
     }
 
-    public class Applicationpackage
+    public class ApplicationPackage
     {
         public string fileName { get; set; }
         public string fileStatus { get; set; }

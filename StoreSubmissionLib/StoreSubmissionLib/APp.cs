@@ -12,22 +12,15 @@ namespace StoreSubmissionLib
         public string primaryName { get; set; }
         public string publisherName { get; set; }
         public DateTime firstPublishedDate { get; set; }
-        public Lastpublishedapplicationsubmission lastPublishedApplicationSubmission { get; set; }
+        public ApplicationSubmission lastPublishedApplicationSubmission { get; set; }
         public string packageFamilyName { get; set; }
         public string packageIdentityName { get; set; }
-        public Pendingapplicationsubmission pendingApplicationSubmission { get; set; }
+        public ApplicationSubmission pendingApplicationSubmission { get; set; }
     }
 
-    public class Lastpublishedapplicationsubmission
+    public class ApplicationSubmission
     {
         public string id { get; set; }
         public string resourceLocation { get; set; }
     }
-
-    public class Pendingapplicationsubmission
-    {
-        public string id { get; set; }
-        public string resourceLocation { get; set; }
-    }
-
 }
