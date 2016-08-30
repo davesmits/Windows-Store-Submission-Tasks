@@ -1,4 +1,4 @@
-﻿using StoreSubmissionLib;
+﻿using StoreSubmissionLib;;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -36,8 +36,7 @@ namespace StoreSubmission
 #endif
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"file: {filePath} does not exists");
-                return;
+                throw new Exception("file: {filePath} does not exists")
             }
 
             if (flightName == "-")
