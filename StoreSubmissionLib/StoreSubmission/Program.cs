@@ -127,7 +127,7 @@ namespace StoreSubmission
                 Console.WriteLine("Appxupload uploaded");
 
                 SubmissionStatus status = await submissionService.CommitSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
-                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, false);
+                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
                 while (!released)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(10));
