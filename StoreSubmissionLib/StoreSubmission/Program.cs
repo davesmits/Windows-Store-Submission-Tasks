@@ -26,7 +26,7 @@ namespace StoreSubmission
             //string flightName = "";
             string filePath = "C:\\Dave\\ATC.Navigation_1.1.54.0_x86_x64_arm_bundle.appxupload";
 #else
-            Console.WriteLine("number of args: " + args.Length);
+            //Console.WriteLine("number of args: " + args.Length);
             string tenantId = args[0];
             string clientId = args[1];
             string clientSecret = args[2];
@@ -36,7 +36,7 @@ namespace StoreSubmission
 #endif
             if (!File.Exists(filePath))
             {
-                throw new Exception("file: {filePath} does not exists")
+                throw new Exception("file: {filePath} does not exists");
             }
 
             if (flightName == "-")
