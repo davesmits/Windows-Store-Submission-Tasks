@@ -85,12 +85,12 @@ namespace StoreSubmission
                 Console.WriteLine("Appxupload uploaded");
 
                 SubmissionStatus status = await submissionService.CommitSubmissionAsync(token.access_token, appId, submission);
-                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
+                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, false);
                 while (!released)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(10));
                     status = await submissionService.GetSubmissionStatusAsync(token.access_token, appId, submission);
-                    released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
+                    released = CheckSubmissionStatus(submission.targetPublishMode, status, false);
                 }
                 Console.WriteLine("Submission released");
             }
@@ -127,12 +127,12 @@ namespace StoreSubmission
                 Console.WriteLine("Appxupload uploaded");
 
                 SubmissionStatus status = await submissionService.CommitSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
-                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
+                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, false);
                 while (!released)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(10));
                     status = await submissionService.GetSubmissionStatusAsync(token.access_token, appId, appInfo.flightId, submission);
-                    released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
+                    released = CheckSubmissionStatus(submission.targetPublishMode, status, false);
                 }
                 Console.WriteLine("Submission commited");
             }
