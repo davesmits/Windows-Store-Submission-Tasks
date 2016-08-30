@@ -86,19 +86,39 @@ namespace StoreSubmissionLib
             return restClient.SendRequestAsync(HttpMethod.Delete, new Uri(url));
         }
 
-        public Task CommitSubmissionAsync(string token, string appId, Submission submission)
+        public Task DeleteSubmissionAsync(string token, string appId, string flightId, FlightSubmission submission)
+        {
+            string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}/submissions/{submission.id}";
+            var restClient = new RestServiceClient(token);
+            return restClient.SendRequestAsync(HttpMethod.Delete, new Uri(url));
+        }
+
+        public Task<SubmissionStatus> GetSubmissionStatusAsync(string token, string appId, Submission submission)
+        {
+            string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/submissions/{submission.id}/status";
+            var restClient = new RestServiceClient(token);
+            return restClient.SendRequestAsync<SubmissionStatus>(HttpMethod.Get, new Uri(url));
+        }
+
+        public Task<SubmissionStatus> GetSubmissionStatusAsync(string token, string appId, string flightId, FlightSubmission submission)
+        {
+            string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}/submissions/{submission.id}/status";
+            var restClient = new RestServiceClient(token);
+            return restClient.SendRequestAsync<SubmissionStatus>(HttpMethod.Get, new Uri(url));
+        }
+
+        public Task<SubmissionStatus> CommitSubmissionAsync(string token, string appId, Submission submission)
         {
             string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/submissions/{submission.id}/commit";
             var restClient = new RestServiceClient(token);
-            return restClient.SendRequestAsync(HttpMethod.Post, new Uri(url));
+            return restClient.SendRequestAsync<SubmissionStatus>(HttpMethod.Post, new Uri(url));
         }
 
-        public async Task CommitSubmissionAsync(string token, string appId, string flightId, FlightSubmission submission)
+        public Task<SubmissionStatus> CommitSubmissionAsync(string token, string appId, string flightId, FlightSubmission submission)
         {
             string url = $"https://manage.devcenter.microsoft.com/v1.0/my/applications/{appId}/flights/{flightId}/submissions/{submission.id}/commit";
             var restClient = new RestServiceClient(token);
-            var res = await restClient.SendRequestAsync<object>(HttpMethod.Post, new Uri(url));
-            string t = res.ToString();
+            return restClient.SendRequestAsync<SubmissionStatus>(HttpMethod.Post, new Uri(url));
         }
 
         public async Task UploadFileAsync(string targetUrl, string filePath)
@@ -119,6 +139,7 @@ namespace StoreSubmissionLib
                         var content = new StreamContent(fileStream);
                         content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
+                        targetUrl = targetUrl.Replace("+", "%2B");
                         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, targetUrl);
                         request.Headers.Add("x-ms-blob-type", "BlockBlob");
                         request.Content = content;
@@ -127,6 +148,10 @@ namespace StoreSubmissionLib
                         response.EnsureSuccessStatusCode();
                     }
                 }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new Exception($"error for url {targetUrl}, message: {ex.ToString()}");
             }
             finally
             {

@@ -1,10 +1,15 @@
 ﻿using StoreSubmissionLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace StoreSubmission
 {
@@ -18,6 +23,7 @@ namespace StoreSubmission
             string clientSecret = "u+wRbf0vs+Kb1UEmB3c9DBuGOQ7+1mQ3HjggkJWFSP4=";
             string appId = "9nblggh1rmqv";
             string flightName = "AlphaVersion";
+            //string flightName = "";
             string filePath = "C:\\Dave\\ATC.Navigation_1.1.54.0_x86_x64_arm_bundle.appxupload";
 #else
             Console.WriteLine("number of args: " + args.Length);
@@ -69,18 +75,33 @@ namespace StoreSubmission
 
             Submission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId);
             Console.WriteLine("Submission created");
+            try
+            {
+                UpdateSubmission(submission, filePath);
+                submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, submission);
+                Console.WriteLine("Submission updated with package");
 
-            UpdateSubmission(submission, filePath);
-            submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, submission);
-            Console.WriteLine("Submission updated with package");
+                await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
+                Console.WriteLine("Appxupload uploaded");
 
-            await Task.Delay(TimeSpan.FromSeconds(20));
-            await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
-            Console.WriteLine("Appxupload uploaded");
-
-            await submissionService.CommitSubmissionAsync(token.access_token, appId, submission);
-            Console.WriteLine("Submission commited");
+                SubmissionStatus status = await submissionService.CommitSubmissionAsync(token.access_token, appId, submission);
+                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
+                while (!released)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    status = await submissionService.GetSubmissionStatusAsync(token.access_token, appId, submission);
+                    released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
+                }
+                Console.WriteLine("Submission released");
+            }
+            catch
+            {
+                await submissionService.DeleteSubmissionAsync(token.access_token, appId, submission);
+                throw;
+            }
         }
+
+        
 
         private static async Task StartFlightSubmission(AuthenticationResult token, string appId, string flightName, string filePath)
         {
@@ -95,17 +116,31 @@ namespace StoreSubmission
 
             FlightSubmission submission = await submissionService.CreateNewSubmissionAsync(token.access_token, appId, appInfo.flightId);
             Console.WriteLine("Submission created");
+            try
+            {
+                UpdateSubmission(submission, filePath);
+                submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
+                Console.WriteLine("Submission updated with package");
 
-            UpdateSubmission(submission, filePath);
-            submission = await submissionService.UpdateSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
-            Console.WriteLine("Submission updated with package");
+                //await Task.Delay(TimeSpan.FromSeconds(20));
+                await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
+                Console.WriteLine("Appxupload uploaded");
 
-            await Task.Delay(TimeSpan.FromSeconds(20));
-            await submissionService.UploadFileAsync(submission.fileUploadUrl, filePath);
-            Console.WriteLine("Appxupload uploaded");
-
-            await submissionService.CommitSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
-            Console.WriteLine("Submission commited");
+                SubmissionStatus status = await submissionService.CommitSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
+                bool released = CheckSubmissionStatus(submission.targetPublishMode, status, false);
+                while (!released)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    status = await submissionService.GetSubmissionStatusAsync(token.access_token, appId, appInfo.flightId, submission);
+                    released = CheckSubmissionStatus(submission.targetPublishMode, status, true);
+                }
+                Console.WriteLine("Submission commited");
+            }
+            catch
+            {
+                await submissionService.DeleteSubmissionAsync(token.access_token, appId, appInfo.flightId, submission);
+                throw;
+            }
         }
 
 
@@ -189,6 +224,27 @@ namespace StoreSubmission
                 fileStatus = "PendingUpload",
                 fileName = Path.GetFileName(filePath)
             });
+        }
+
+        private static bool CheckSubmissionStatus(string targetPublishMode, SubmissionStatus status, bool waitForRelease)
+        {
+            if (status.status.EndsWith("Failed") || status.status == "Canceled")
+                throw new Exception("Submission Failed");
+            switch (status.status)
+            {
+                case "CommitStarted":
+                    return false;
+                case "CommitFailed":
+                    throw new Exception("Submission Commit Failed");
+                case "PreProcessing":
+                    return waitForRelease ? false : true;
+                case "Published":
+                    return true;
+                case "Release":
+                    return targetPublishMode == "Immediate" ? true : false;
+                default:
+                    return false;
+            }
         }
 
     }

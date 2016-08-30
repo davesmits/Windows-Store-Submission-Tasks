@@ -45,3 +45,8 @@ if (-Not $file)
 
 Write-Host "calling: .\StoreSubmission.exe ""$tenantid"" ""$clientid"" ""$clientsecret"" ""$appid"" ""$flightname"" ""$file"""
 .\StoreSubmission.exe "$tenantid" "$clientid" "$clientsecret" "$appid" "$flightname" "$file"
+
+if ($LASTEXITCODE -ne 0)
+{
+    throw "Error uploading package"
+}

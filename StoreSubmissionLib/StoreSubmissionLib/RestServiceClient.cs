@@ -42,6 +42,12 @@ namespace StoreSubmissionLib
                 requestMessage.Content = content;
                 var responseMessage = await client.SendAsync(requestMessage).ConfigureAwait(false);
 
+                if (!responseMessage.IsSuccessStatusCode)
+                {
+                    string error = await responseMessage.Content.ReadAsStringAsync();
+                    Console.WriteLine($"error: {error}");
+                }
+
                 responseMessage.EnsureSuccessStatusCode();
                 return responseMessage;
             }

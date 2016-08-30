@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace StoreSubmissionLib
 {
-
     public class Submission
     {
         public string id { get; set; }
@@ -91,6 +90,7 @@ namespace StoreSubmissionLib
         public bool Desktop { get; set; }
         public bool Mobile { get; set; }
         public bool Holographic { get; set; }
+        public bool Xbox { get; set; }
     }
 
     public class ApplicationPackage
@@ -104,6 +104,8 @@ namespace StoreSubmissionLib
         public string[] capabilities { get; set; }
         public string minimumDirectXVersion { get; set; }
         public string minimumSystemRam { get; set; }
+        public string[] targetDeviceFamilies { get; set; }
     }
+
 
 }

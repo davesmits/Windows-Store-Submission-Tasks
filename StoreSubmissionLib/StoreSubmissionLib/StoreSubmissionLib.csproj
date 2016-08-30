@@ -55,6 +55,7 @@
     <Compile Include="RestServiceClient.cs" />
     <Compile Include="Submission.cs" />
     <Compile Include="SubmissionService.cs" />
+    <Compile Include="SubmissionStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
